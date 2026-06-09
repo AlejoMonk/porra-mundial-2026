@@ -53,8 +53,8 @@ export default async function AdminUsersPage() {
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.125rem' }}>{u.email}</div>
               </div>
 
-              {/* Joined */}
-              <div style={{ textAlign: 'center', minWidth: 90 }}>
+              {/* Joined — hidden on mobile */}
+              <div className="admin-user-reg" style={{ textAlign: 'center', minWidth: 90 }}>
                 <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>REGISTRO</div>
                 <div style={{ fontSize: '0.8rem' }}>
                   {new Date(u.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}

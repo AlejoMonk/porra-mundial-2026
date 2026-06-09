@@ -81,7 +81,7 @@ export default async function UserPredictionPage({ params }: { params: Promise<{
 
       {/* Score summary */}
       {prediction.totalPoints > 0 && (
-        <div className="glass" style={{ padding: '1.25rem 1.5rem', borderRadius: '0.75rem', marginBottom: '2rem', display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="glass pred-score-summary" style={{ padding: '1rem 1.25rem', borderRadius: '0.75rem', marginBottom: '2rem' }}>
           {[
             { label: 'Grupos', value: prediction.groupPoints },
             { label: 'Terceros', value: prediction.thirdPlacePoints },
@@ -91,7 +91,7 @@ export default async function UserPredictionPage({ params }: { params: Promise<{
           ].map(({ label, value, highlight }) => (
             <div key={label} style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>{label}</div>
-              <div style={{ fontSize: highlight ? '2rem' : '1.25rem', fontWeight: 900, color: highlight ? '#22c55e' : 'var(--text)' }}>{value}</div>
+              <div style={{ fontSize: highlight ? '1.75rem' : '1.25rem', fontWeight: 900, color: highlight ? '#22c55e' : 'var(--text)' }}>{value}</div>
             </div>
           ))}
         </div>

@@ -73,6 +73,7 @@ export default async function Home() {
           textAlign: 'center',
           padding: '5rem 1.5rem',
           position: 'relative',
+          overflow: 'hidden',
         }}
       >
         <div
@@ -81,8 +82,10 @@ export default async function Home() {
             top: '40%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 600,
-            height: 600,
+            width: '90vw',
+            maxWidth: 600,
+            height: '90vw',
+            maxHeight: 600,
             borderRadius: '50%',
             background: 'radial-gradient(circle, rgba(34,197,94,0.06) 0%, transparent 70%)',
             pointerEvents: 'none',
