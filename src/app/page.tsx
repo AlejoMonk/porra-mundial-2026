@@ -20,37 +20,14 @@ export default async function Home() {
           zIndex: 50,
         }}
       >
-        <div
-          style={{
-            maxWidth: 1200,
-            margin: '0 auto',
-            padding: '1rem 1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            position: 'relative',
-          }}
-        >
+        <div className="landing-header-inner">
+          {/* Logo */}
           <span style={{ fontSize: '1.25rem', fontWeight: 800, flexShrink: 0 }}>
             ⚽ <span className="gradient-text">Mundial 2026</span>
           </span>
 
-          {/* Attribution — absolutely centred so it's symmetric regardless of logo/button widths */}
-          <div
-            className="landing-attribution"
-            style={{
-              position: 'absolute',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '0.1rem',
-              pointerEvents: 'none',
-              whiteSpace: 'nowrap',
-            }}
-          >
+          {/* Attribution — centrado absoluto, solo visible en desktop */}
+          <div className="landing-attribution">
             <span style={{ fontSize: '0.6rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               Creado por
             </span>
@@ -71,12 +48,13 @@ export default async function Home() {
             </span>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
+          {/* Botones */}
+          <div className="landing-buttons">
             <ThemeToggle />
-            <Link href="/login" className="btn-secondary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.875rem' }}>
+            <Link href="/login" className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>
               Iniciar sesión
             </Link>
-            <Link href="/register" className="btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.875rem' }}>
+            <Link href="/register" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>
               Unirse
             </Link>
           </div>
@@ -85,6 +63,7 @@ export default async function Home() {
 
       {/* Hero */}
       <section
+        className="landing-hero"
         style={{
           flex: 1,
           display: 'flex',
