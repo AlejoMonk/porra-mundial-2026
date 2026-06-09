@@ -79,6 +79,16 @@ export default async function AdminDashboard() {
             </p>
           </div>
         </Link>
+
+        <Link href="/admin/backup" className="card-link" download>
+          <div className="glass" style={{ padding: '1.5rem', borderRadius: '0.75rem', cursor: 'pointer' }}>
+            <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>💾</div>
+            <h3 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>Exportar backup</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+              Descarga un JSON con todos los usuarios, predicciones y resultados.
+            </p>
+          </div>
+        </Link>
       </div>
 
       {/* Current settings */}

@@ -1,9 +1,8 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? 'fallback-secret-change-in-production'
-)
+if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is not set')
+const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
 export interface SessionPayload {
   userId: string
