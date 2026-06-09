@@ -1,9 +1,12 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy init: created on first use, not at module load time (avoids build-time errors)
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY)
+}
 
 export async function sendPasswordResetEmail(to: string, resetUrl: string) {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: process.env.RESEND_FROM ?? 'onboarding@resend.dev',
     to,
     subject: '🔑 Recuperar contraseña — Porra Mundial 2026',
