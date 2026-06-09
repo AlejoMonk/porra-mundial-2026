@@ -14,6 +14,16 @@ function createPrismaClient() {
   return new (PrismaClient as any)({ adapter })
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient()
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Lazy proxy: the real client is only created on first use, not at import time.
+// This prevents build-time errors when DATABASE_URL / the volume isn't available yet.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const prisma: any = new Proxy({} as any, {
+  get(_target, prop) {
+    if (!globalForPrisma.prisma) {
+      const client = createPrismaClient()
+      if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = client
+      return client[prop as string]
+    }
+    return globalForPrisma.prisma[prop as string]
+  },
+})
