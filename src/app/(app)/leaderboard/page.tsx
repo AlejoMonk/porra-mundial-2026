@@ -126,36 +126,25 @@ export default async function LeaderboardPage() {
                   borderLeft: rank === 1 ? '3px solid #f59e0b' : rank === 2 ? '3px solid #94a3b8' : rank === 3 ? '3px solid #d97706' : undefined,
                 }}
               >
-                {/* Top row: rank + name + ver button */}
-                <div className="lb-main">
-                  <div className="lb-rank" style={{ fontSize: rank <= 3 ? '1.5rem' : '1.125rem', fontWeight: 900 }}>
-                    {rankEmoji}
-                  </div>
-                  <div className="lb-name">
-                    <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      {pred.user.alias ?? pred.user.name}
-                      {isMe && <span className="badge badge-green" style={{ fontSize: '0.65rem' }}>Tú</span>}
-                    </div>
-                    {champion && (
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.375rem', marginTop: '0.125rem' }}>
-                        🏆 <TeamFlag code={championCode!} /> {champion.name}
-                      </div>
-                    )}
-                  </div>
-                  <div className="lb-actions">
-                    {canViewPrediction && (
-                      <Link
-                        href={`/predictions/${pred.user.id}`}
-                        className="btn-secondary"
-                        style={{ padding: '0.35rem 0.625rem', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
-                      >
-                        Ver →
-                      </Link>
-                    )}
-                  </div>
+                {/* Rank */}
+                <div className="lb-rank" style={{ fontSize: rank <= 3 ? '1.5rem' : '1.125rem', fontWeight: 900 }}>
+                  {rankEmoji}
                 </div>
 
-                {/* Score breakdown row */}
+                {/* Name + champion */}
+                <div className="lb-name">
+                  <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {pred.user.alias ?? pred.user.name}
+                    {isMe && <span className="badge badge-green" style={{ fontSize: '0.65rem' }}>Tú</span>}
+                  </div>
+                  {champion && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.375rem', marginTop: '0.125rem' }}>
+                      🏆 <TeamFlag code={championCode!} /> {champion.name}
+                    </div>
+                  )}
+                </div>
+
+                {/* Score breakdown */}
                 <div className="leaderboard-score-row" style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
                   {[
                     { label: 'Grupos', value: pred.groupPoints },
@@ -175,6 +164,19 @@ export default async function LeaderboardPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Ver button */}
+                {canViewPrediction && (
+                  <div className="lb-actions">
+                    <Link
+                      href={`/predictions/${pred.user.id}`}
+                      className="btn-secondary"
+                      style={{ padding: '0.35rem 0.625rem', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
+                    >
+                      Ver →
+                    </Link>
+                  </div>
+                )}
               </div>
             )
           })}

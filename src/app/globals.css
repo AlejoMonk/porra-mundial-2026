@@ -635,15 +635,14 @@ select.form-input {
 }
 
 /* ─── Leaderboard entry card ─────────────────────────────────────────────── */
+/* Desktop: horizontal row  [rank] [name flex:1] [scores] [ver btn]          */
+/* Mobile:  2-row layout    [rank][name][ver] / [scores full-width]           */
 .leaderboard-entry {
   display: flex !important;
-  flex-direction: column !important;
-  gap: 0.5rem;
-}
-.lb-main {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 .lb-rank {
   flex-shrink: 0;
@@ -652,24 +651,29 @@ select.form-input {
 }
 .lb-name {
   flex: 1;
-  min-width: 0;
+  min-width: 120px;
 }
 .lb-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   flex-shrink: 0;
 }
 
 @media (max-width: 640px) {
   .leaderboard-entry {
     padding: 0.625rem 0.75rem !important;
-    gap: 0.25rem !important;
+    gap: 0.25rem 0.5rem !important;
+    align-items: center !important;
   }
+  /* Row 1: rank (1) + name (2) + ver-btn (3) */
+  .lb-rank  { order: 1; }
+  .lb-name  { order: 2; flex: 1; min-width: 0; }
+  .lb-actions { order: 3; }
+  /* Row 2: scores pushed to their own line */
   .leaderboard-score-row {
+    order: 10;
+    flex-basis: 100% !important;
     flex-wrap: nowrap !important;
-    gap: 0.5rem !important;
     overflow-x: auto;
+    gap: 0.5rem !important;
     scrollbar-width: none;
     padding: 0.125rem 0 0.2rem;
   }
