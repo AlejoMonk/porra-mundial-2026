@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth'
 import { getTeam, GROUPS, R32_MATCHES, R16_MATCHES, QF_MATCHES, SF_MATCHES, THIRD_PLACE_MATCH, FINAL_MATCH } from '@/lib/constants'
 import { TeamFlag } from '@/components/TeamFlag'
+import { BackButton } from '@/components/BackButton'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
@@ -62,7 +63,7 @@ export default async function UserPredictionPage({ params }: { params: Promise<{
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-        <Link href="/predictions" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.875rem' }}>← Volver</Link>
+        <BackButton />
         <h1 style={{ fontSize: '1.75rem', fontWeight: 900, flex: 1, color: 'var(--text)' }}>
           {isMe ? '🗳️ Mi predicción' : `Predicción de ${user.alias ?? user.name}`}
         </h1>
