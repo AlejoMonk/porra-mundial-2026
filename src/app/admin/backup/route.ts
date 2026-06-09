@@ -36,8 +36,8 @@ export async function GET() {
     summary: {
       totalUsers: users.length,
       totalPredictions: predictions.length,
-      phase1Submitted: predictions.filter((p) => p.isLocked).length,
-      phase2Submitted: predictions.filter((p) => p.isPhase2Locked).length,
+      phase1Submitted: predictions.filter((p: { isLocked: boolean }) => p.isLocked).length,
+      phase2Submitted: predictions.filter((p: { isPhase2Locked: boolean }) => p.isPhase2Locked).length,
     },
     users,
     predictions,
