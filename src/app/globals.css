@@ -572,3 +572,70 @@ select.form-input {
 @media (max-width: 500px) {
   .group-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ─── Hero landing text: readable in both themes ────────────────────────── */
+/* Dark mode / over stadium: white with shadow */
+.hero-subtext {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+/* Light mode: dark text, no shadow — the overlay is very light so the bg is near-white */
+:root .hero-subtext {
+  color: var(--text);
+  text-shadow: none;
+}
+[data-theme="dark"] .hero-subtext {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Admin nav responsive ──────────────────────────────────────────────── */
+.admin-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.admin-nav {
+  display: flex;
+  gap: 0.25rem;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  .admin-header-inner {
+    flex-wrap: wrap;
+    padding: 0.5rem 0.75rem;
+    gap: 0.25rem;
+  }
+  .admin-nav {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .admin-nav::-webkit-scrollbar { display: none; }
+  .admin-nav .nav-link {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.45rem;
+    flex-shrink: 0;
+  }
+}
+
+/* ─── Leaderboard score row: show compact on mobile ────────────────────── */
+@media (max-width: 640px) {
+  /* Show all scores but smaller and tighter */
+  .score-detail { display: block; }
+  .score-detail > div:first-child { font-size: 0.55rem; }
+  .score-detail > div:last-child { font-size: 0.85rem; }
+  .leaderboard-score-row { gap: 0.5rem !important; flex-wrap: nowrap; }
+}

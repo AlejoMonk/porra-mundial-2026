@@ -100,13 +100,11 @@ export default async function Home() {
           del Mundial 2026
         </h1>
 
-        <p style={{
+        <p className="hero-subtext" style={{
           fontSize: '1.125rem',
-          color: 'rgba(255,255,255,0.92)',
           maxWidth: 540,
           marginBottom: '3rem',
           lineHeight: 1.75,
-          textShadow: '0 1px 6px rgba(0,0,0,0.55)',
           fontWeight: 400,
         }}>
           Predice todos los partidos, demuestra que eres un friki del fúbol y que tus 2 neuronas están bien engrasadas.
