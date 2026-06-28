@@ -103,8 +103,10 @@ export default async function AllPredictionsPage() {
                     {isMe && <span className="badge badge-green" style={{ fontSize: '0.65rem' }}>Tú</span>}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.125rem' }}>
-                    {pred.isPhase2Locked
-                      ? '✅ Fase 1 y 2 enviadas'
+                    {pred.isPhase3Locked
+                      ? '✅ Fases 1, 2 y 3 enviadas'
+                      : pred.isPhase2Locked
+                      ? '✅ Fases 1 y 2 enviadas'
                       : '✅ Fase 1 enviada'}
                   </div>
                 </div>

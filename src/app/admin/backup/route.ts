@@ -38,6 +38,7 @@ export async function GET() {
       totalPredictions: predictions.length,
       phase1Submitted: predictions.filter((p: { isLocked: boolean }) => p.isLocked).length,
       phase2Submitted: predictions.filter((p: { isPhase2Locked: boolean }) => p.isPhase2Locked).length,
+      phase3Submitted: predictions.filter((p: { isPhase3Locked: boolean }) => p.isPhase3Locked).length,
     },
     users,
     predictions,

@@ -23,6 +23,7 @@ export default async function LeaderboardPage() {
   const now = new Date()
   const deadlinePassed = settings?.predictionDeadline && now > settings.predictionDeadline
   const phase2DeadlinePassed = settings?.phase2Deadline && now > settings.phase2Deadline
+  const phase3DeadlinePassed = settings?.phase3Deadline && now > settings.phase3Deadline
   const totalParticipants = await prisma.user.count()
   const submittedCount = predictions.length
 
@@ -53,7 +54,7 @@ export default async function LeaderboardPage() {
       </div>
 
       {/* Countdowns */}
-      {(settings?.predictionDeadline || settings?.phase2Deadline) && (
+      {(settings?.predictionDeadline || settings?.phase2Deadline || settings?.phase3Deadline) && (
         <div className="glass" style={{ padding: '0.875rem 1.25rem', borderRadius: '0.75rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
           {settings?.predictionDeadline && !deadlinePassed && (
             <Countdown
@@ -74,6 +75,16 @@ export default async function LeaderboardPage() {
           )}
           {settings?.phase2Deadline && phase2DeadlinePassed && (
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>✅ Fase 2 cerrada</span>
+          )}
+          {settings?.phase3Deadline && !phase3DeadlinePassed && (
+            <Countdown
+              deadline={settings.phase3Deadline.toISOString()}
+              label="⏳ Fase 3 cierra en"
+              color="#3b82f6"
+            />
+          )}
+          {settings?.phase3Deadline && phase3DeadlinePassed && (
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>✅ Fase 3 cerrada</span>
           )}
         </div>
       )}

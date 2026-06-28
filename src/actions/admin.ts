@@ -92,6 +92,7 @@ export async function updateSettings(formData: FormData) {
   await requireAdmin()
   const deadline = formData.get('deadline') as string
   const phase2Deadline = formData.get('phase2Deadline') as string
+  const phase3Deadline = formData.get('phase3Deadline') as string
   const regOpen = formData.get('registrationOpen') === 'true'
 
   await prisma.appSettings.upsert({
@@ -99,12 +100,14 @@ export async function updateSettings(formData: FormData) {
     update: {
       predictionDeadline: deadline ? new Date(deadline) : null,
       phase2Deadline: phase2Deadline ? new Date(phase2Deadline) : null,
+      phase3Deadline: phase3Deadline ? new Date(phase3Deadline) : null,
       registrationOpen: regOpen,
     },
     create: {
       id: 'singleton',
       predictionDeadline: deadline ? new Date(deadline) : null,
       phase2Deadline: phase2Deadline ? new Date(phase2Deadline) : null,
+      phase3Deadline: phase3Deadline ? new Date(phase3Deadline) : null,
       registrationOpen: regOpen,
     },
   })

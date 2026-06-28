@@ -55,6 +55,8 @@ db.exec(`
     isLocked          INTEGER NOT NULL DEFAULT 0,
     isPhase2Locked    INTEGER NOT NULL DEFAULT 0,
     phase2SubmittedAt DATETIME,
+    isPhase3Locked    INTEGER NOT NULL DEFAULT 0,
+    phase3SubmittedAt DATETIME,
     groupPredictions  TEXT NOT NULL DEFAULT '{}',
     thirdPlacePicks   TEXT NOT NULL DEFAULT '[]',
     knockoutPicks     TEXT NOT NULL DEFAULT '{}',
@@ -96,10 +98,26 @@ db.exec(`
     id                 TEXT PRIMARY KEY DEFAULT 'singleton',
     predictionDeadline DATETIME,
     phase2Deadline     DATETIME,
+    phase3Deadline     DATETIME,
     registrationOpen   INTEGER NOT NULL DEFAULT 1,
     updatedAt          DATETIME NOT NULL DEFAULT (datetime('now'))
   );
 `)
+
+// ── Migraciones idempotentes: añadir columnas nuevas a tablas existentes ──────
+// CREATE TABLE IF NOT EXISTS no añade columnas a tablas ya creadas, así que
+// comprobamos con PRAGMA table_info y hacemos ALTER TABLE ADD COLUMN si faltan.
+function ensureColumn(table, column, definition) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all()
+  if (!cols.some((c) => c.name === column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`)
+    console.log(`[init-db] + Columna añadida: ${table}.${column}`)
+  }
+}
+
+ensureColumn('Prediction', 'isPhase3Locked', 'INTEGER NOT NULL DEFAULT 0')
+ensureColumn('Prediction', 'phase3SubmittedAt', 'DATETIME')
+ensureColumn('AppSettings', 'phase3Deadline', 'DATETIME')
 
 // Garantizar que los singletons existen
 db.prepare(`INSERT OR IGNORE INTO TournamentResult (id, updatedAt) VALUES ('singleton', datetime('now'))`).run()

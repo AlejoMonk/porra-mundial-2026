@@ -137,36 +137,49 @@ export default async function UserPredictionPage({ params }: { params: Promise<{
           )}
         </section>
 
-        {/* Knockout — only visible when phase 2 is submitted */}
+        {/* Fase 2 — dieciseisavos + octavos (visible cuando se envía la fase 2) */}
         {prediction.isPhase2Locked ? (
+          <section className="glass" style={{ padding: '1.5rem', borderRadius: '1rem' }}>
+            <h2 style={{ fontWeight: 700, marginBottom: '1rem', color: '#f59e0b' }}>⚔️ Fase 2 · Dieciseisavos y Octavos</h2>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#f59e0b', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                <span>⚔️</span> Dieciséisavos
+              </div>
+              {R32_MATCHES.map((m) => <MatchRow key={m.match} matchNum={m.match} label={`Partido ${m.match - 72}`} />)}
+            </div>
+
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#f59e0b', textTransform: 'uppercase', marginBottom: '0.5rem', marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                <span>🔟</span> Octavos de Final
+              </div>
+              {R16_MATCHES.map((m) => <MatchRow key={m} matchNum={m} label={`Octavo ${m - 88}`} />)}
+            </div>
+          </section>
+        ) : (
+          <section className="glass" style={{ padding: '1.5rem', borderRadius: '1rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🔒</div>
+            <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: 'var(--text)' }}>Fase 2 pendiente</div>
+            <div style={{ fontSize: '0.85rem' }}>Los dieciseisavos y octavos estarán visibles cuando el participante envíe la fase 2.</div>
+          </section>
+        )}
+
+        {/* Fase 3 — cuartos → final + premios (visible cuando se envía la fase 3) */}
+        {prediction.isPhase3Locked ? (
           <>
             <section className="glass" style={{ padding: '1.5rem', borderRadius: '1rem' }}>
-              <h2 style={{ fontWeight: 700, marginBottom: '1rem', color: '#f59e0b' }}>⚔️ Fase eliminatoria</h2>
+              <h2 style={{ fontWeight: 700, marginBottom: '1rem', color: '#22c55e' }}>🏆 Fase 3 · Cuartos a la Final</h2>
 
               <div style={{ marginBottom: '1rem' }}>
-                <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#f59e0b', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                  <span>⚔️</span> Dieciséisavos
-                </div>
-                {R32_MATCHES.map((m) => <MatchRow key={m.match} matchNum={m.match} label={`Partido ${m.match - 72}`} />)}
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#f59e0b', textTransform: 'uppercase', marginBottom: '0.5rem', marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                  <span>🔟</span> Octavos de Final
-                </div>
-                {R16_MATCHES.map((m) => <MatchRow key={m} matchNum={m} label={`Octavo ${m - 88}`} />)}
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#f59e0b', textTransform: 'uppercase', marginBottom: '0.5rem', marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#22c55e', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
                   <span>🏅</span> Cuartos de Final
                 </div>
                 {QF_MATCHES.map((m) => <MatchRow key={m} matchNum={m} label={`Cuarto ${m - 96}`} />)}
               </div>
 
-              <div style={{ marginBottom: '1rem' }}>
-                <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#f59e0b', textTransform: 'uppercase', marginBottom: '0.5rem', marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                  <span>🏆</span> Semis y Final
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '0.8rem', color: '#22c55e', textTransform: 'uppercase', marginBottom: '0.5rem', marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                  <span>🏆</span> Semis, 3er Puesto y Final
                 </div>
                 {SF_MATCHES.map((m) => <MatchRow key={m} matchNum={m} label={`Semifinal ${m - 100}`} />)}
                 <MatchRow matchNum={THIRD_PLACE_MATCH} label="3er Puesto" />
@@ -175,7 +188,7 @@ export default async function UserPredictionPage({ params }: { params: Promise<{
             </section>
 
             <section className="glass" style={{ padding: '1.5rem', borderRadius: '1rem' }}>
-              <h2 style={{ fontWeight: 700, marginBottom: '1rem', color: '#f59e0b' }}>⭐ Premios especiales</h2>
+              <h2 style={{ fontWeight: 700, marginBottom: '1rem', color: '#22c55e' }}>⭐ Premios especiales</h2>
               <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap' }}>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>⚽ Pichichi</div>
@@ -188,13 +201,13 @@ export default async function UserPredictionPage({ params }: { params: Promise<{
               </div>
             </section>
           </>
-        ) : (
+        ) : prediction.isPhase2Locked ? (
           <section className="glass" style={{ padding: '1.5rem', borderRadius: '1rem', textAlign: 'center', color: 'var(--text-muted)' }}>
             <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🔒</div>
-            <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: 'var(--text)' }}>Fase 2 pendiente</div>
-            <div style={{ fontSize: '0.85rem' }}>Las predicciones de eliminatorias y premios estarán visibles cuando el participante envíe la fase 2.</div>
+            <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: 'var(--text)' }}>Fase 3 pendiente</div>
+            <div style={{ fontSize: '0.85rem' }}>Los cuartos, semis, final y premios estarán visibles cuando el participante envíe la fase 3.</div>
           </section>
-        )}
+        ) : null}
       </div>
     </div>
   )

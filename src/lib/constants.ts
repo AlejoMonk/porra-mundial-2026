@@ -219,6 +219,19 @@ export const SF_MATCHES = [101, 102]
 export const THIRD_PLACE_MATCH = 103
 export const FINAL_MATCH = 104
 
+// ── Partición de eliminatorias por fase de predicción ───────────────────────
+// Fase 2: dieciseisavos (R32) + octavos (R16) → partidos 73-96
+// Fase 3: cuartos (QF) + semis (SF) + 3er puesto + final → partidos 97-104 (+ premios)
+export const PHASE2_MATCHES = [...R32_MATCHES.map((m) => m.match), ...R16_MATCHES] // 73-96
+export const PHASE3_MATCHES = [...QF_MATCHES, ...SF_MATCHES, THIRD_PLACE_MATCH, FINAL_MATCH] // 97-104
+
+export function isPhase2Match(matchNum: number): boolean {
+  return matchNum >= 73 && matchNum <= 96
+}
+export function isPhase3Match(matchNum: number): boolean {
+  return matchNum >= 97 && matchNum <= 104
+}
+
 export const ROUND_LABELS: Record<string, string> = {
   r32: 'Octavos de Final',
   r16: 'Octavos',

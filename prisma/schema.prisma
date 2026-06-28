@@ -24,9 +24,11 @@ model Prediction {
   userId           String   @unique
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   submittedAt       DateTime  @default(now())
-  isLocked          Boolean   @default(false)   // fase 1 bloqueada
-  isPhase2Locked    Boolean   @default(false)   // fase 2 bloqueada
+  isLocked          Boolean   @default(false)   // fase 1 bloqueada (grupos + terceros)
+  isPhase2Locked    Boolean   @default(false)   // fase 2 bloqueada (dieciseisavos + octavos)
   phase2SubmittedAt DateTime?
+  isPhase3Locked    Boolean   @default(false)   // fase 3 bloqueada (cuartos → final + premios)
+  phase3SubmittedAt DateTime?
   // JSON fields stored as strings
   groupPredictions String   @default("{}") // {A:{winner:"MEX",runnerUp:"KOR"}, ...}
   thirdPlacePicks  String   @default("[]") // ["MEX","BRA",...] - 8 team codes
@@ -69,7 +71,8 @@ model TournamentResult {
 model AppSettings {
   id                 String    @id @default("singleton")
   predictionDeadline DateTime?   // cierre fase 1 (grupos + terceros)
-  phase2Deadline     DateTime?   // cierre fase 2 (eliminatorias + premios)
+  phase2Deadline     DateTime?   // cierre fase 2 (dieciseisavos + octavos)
+  phase3Deadline     DateTime?   // cierre fase 3 (cuartos → final + premios)
   registrationOpen   Boolean   @default(true)
   updatedAt          DateTime  @updatedAt
 }

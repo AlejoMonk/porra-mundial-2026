@@ -15,6 +15,7 @@ export default async function AdminSettingsPage() {
       <SettingsForm
         initialDeadline={settings?.predictionDeadline?.toISOString().slice(0, 16) ?? ''}
         initialPhase2Deadline={settings?.phase2Deadline?.toISOString().slice(0, 16) ?? ''}
+        initialPhase3Deadline={settings?.phase3Deadline?.toISOString().slice(0, 16) ?? ''}
         initialRegOpen={settings?.registrationOpen ?? true}
       />
     </div>

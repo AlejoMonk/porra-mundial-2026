@@ -138,6 +138,30 @@ export function propagateBracket(
   return allSlots
 }
 
+// Given a match number, return every downstream match that depends on it.
+// Used to clear stale picks when a user changes an earlier-round winner.
+const DOWNSTREAM_TREE: Record<number, number> = {
+  74: 89, 77: 89, 73: 90, 75: 90,
+  76: 91, 78: 91, 79: 92, 80: 92,
+  83: 93, 84: 93, 81: 94, 82: 94,
+  86: 95, 88: 95, 85: 96, 87: 96,
+  89: 97, 90: 97, 93: 98, 94: 98,
+  91: 99, 92: 99, 95: 100, 96: 100,
+  97: 101, 98: 101, 99: 102, 100: 102,
+  101: 103, 102: 103, 103: 104, 104: 999,
+}
+
+export function getDownstreamMatches(matchNum: number): number[] {
+  const result: number[] = []
+  const queue = [matchNum]
+  while (queue.length) {
+    const m = queue.shift()!
+    const next = DOWNSTREAM_TREE[m]
+    if (next && next !== 999) { result.push(next); queue.push(next) }
+  }
+  return result
+}
+
 // Get all team codes not chosen as winner or runner-up in any group prediction
 export function getAvailableThirdPlaceTeams(
   groupPredictions: GroupPredictions,

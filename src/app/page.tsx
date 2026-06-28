@@ -135,7 +135,7 @@ export default async function Home() {
           <h3 style={{ fontWeight: 700, textAlign: 'center', marginBottom: '0.5rem', color: 'var(--text)' }}>
             ¿Cómo funciona la porra?
           </h3>
-          <div className="landing-phase-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="landing-phase-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             <div className="glass" style={{ padding: '1.5rem', borderRadius: '0.75rem', borderLeft: '3px solid #22c55e' }}>
               <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#22c55e', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                 Fase 1 — Antes del torneo
@@ -149,9 +149,18 @@ export default async function Home() {
               <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                 Fase 2 — Tras la fase de grupos
               </div>
-              <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text)' }}>Eliminatorias y Premios</div>
+              <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text)' }}>Dieciseisavos y Octavos</div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                Una vez cerrada la fase de grupos, el admin abre la fase 2: predice los ganadores de dieciséisavos hasta la final, el Pichichi y el MVP.
+                Con los grupos cerrados, el admin abre la fase 2: predice los ganadores de los dieciseisavos y los octavos de final.
+              </div>
+            </div>
+            <div className="glass" style={{ padding: '1.5rem', borderRadius: '0.75rem', borderLeft: '3px solid #3b82f6' }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                Fase 3 — Tras los octavos
+              </div>
+              <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text)' }}>Cuartos a la Final y Premios</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                En la recta final, predice los ganadores desde cuartos hasta la gran final, además del Pichichi y el MVP del torneo.
               </div>
             </div>
           </div>

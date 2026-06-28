@@ -10,7 +10,7 @@ export default async function AdminUsersPage() {
   const users = await prisma.user.findMany({
     orderBy: { createdAt: 'desc' },
     include: {
-      prediction: { select: { isLocked: true, isPhase2Locked: true, totalPoints: true } },
+      prediction: { select: { isLocked: true, isPhase2Locked: true, isPhase3Locked: true, totalPoints: true } },
     },
   })
 
@@ -77,6 +77,16 @@ export default async function AdminUsersPage() {
                 <div style={{ fontSize: '0.85rem' }}>
                   {pred?.isPhase2Locked
                     ? <span style={{ color: '#f59e0b', fontWeight: 700 }}>✓ Enviada</span>
+                    : <span style={{ color: 'var(--text-muted)' }}>Pendiente</span>}
+                </div>
+              </div>
+
+              {/* Phase 3 */}
+              <div style={{ textAlign: 'center', minWidth: 80 }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>FASE 3</div>
+                <div style={{ fontSize: '0.85rem' }}>
+                  {pred?.isPhase3Locked
+                    ? <span style={{ color: '#22c55e', fontWeight: 700 }}>✓ Enviada</span>
                     : <span style={{ color: 'var(--text-muted)' }}>Pendiente</span>}
                 </div>
               </div>

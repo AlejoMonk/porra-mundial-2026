@@ -23,14 +23,17 @@ function localInputToUtcIso(local: string): string {
 export default function SettingsForm({
   initialDeadline,
   initialPhase2Deadline,
+  initialPhase3Deadline,
   initialRegOpen,
 }: {
   initialDeadline: string
   initialPhase2Deadline: string
+  initialPhase3Deadline: string
   initialRegOpen: boolean
 }) {
   const [deadline, setDeadline] = useState(() => utcToLocalInput(initialDeadline))
   const [phase2Deadline, setPhase2Deadline] = useState(() => utcToLocalInput(initialPhase2Deadline))
+  const [phase3Deadline, setPhase3Deadline] = useState(() => utcToLocalInput(initialPhase3Deadline))
   const [regOpen, setRegOpen] = useState(initialRegOpen)
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState<string | null>(null)
@@ -40,6 +43,7 @@ export default function SettingsForm({
     const formData = new FormData()
     formData.set('deadline', localInputToUtcIso(deadline))
     formData.set('phase2Deadline', localInputToUtcIso(phase2Deadline))
+    formData.set('phase3Deadline', localInputToUtcIso(phase3Deadline))
     formData.set('registrationOpen', regOpen ? 'true' : 'false')
     startTransition(async () => {
       await updateSettings(formData)
@@ -78,9 +82,9 @@ export default function SettingsForm({
               </p>
             )}
           </div>
-          <h3 style={{ fontWeight: 700, marginBottom: '1rem', marginTop: '1.5rem' }}>🏆 Fase 2 — Eliminatorias y Premios</h3>
+          <h3 style={{ fontWeight: 700, marginBottom: '1rem', marginTop: '1.5rem' }}>⚔️ Fase 2 — Dieciseisavos y Octavos</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1rem' }}>
-            Fecha límite para enviar predicciones de dieciséisavos en adelante. Déjala vacía hasta que quieras abrir la fase 2.
+            Fecha límite para enviar predicciones de dieciseisavos y octavos. Déjala vacía hasta que quieras abrir la fase 2 (tras la fase de grupos).
           </p>
           <div>
             <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text)' }}>
@@ -95,6 +99,26 @@ export default function SettingsForm({
             {phase2Deadline && (
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
                 Cierre: {new Date(phase2Deadline).toLocaleString('es-ES', { dateStyle: 'full', timeStyle: 'short' })}
+              </p>
+            )}
+          </div>
+          <h3 style={{ fontWeight: 700, marginBottom: '1rem', marginTop: '1.5rem' }}>🏆 Fase 3 — Cuartos a la Final y Premios</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1rem' }}>
+            Fecha límite para enviar predicciones de cuartos, semis, final, pichichi y MVP. Déjala vacía hasta que quieras abrir la fase 3 (tras los octavos).
+          </p>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text)' }}>
+              Cierre fase 3 (hora local)
+            </label>
+            <input
+              type="datetime-local"
+              value={phase3Deadline}
+              onChange={(e) => setPhase3Deadline(e.target.value)}
+              className="form-input"
+            />
+            {phase3Deadline && (
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                Cierre: {new Date(phase3Deadline).toLocaleString('es-ES', { dateStyle: 'full', timeStyle: 'short' })}
               </p>
             )}
           </div>
