@@ -108,9 +108,9 @@ export default function ResultsForm({
   const tabs: { key: TabKey; label: string }[] = [
     { key: 'groups', label: '📋 Grupos' },
     { key: 'terceros', label: '🥉 Terceros R32' },
-    { key: 'r32', label: '⚔️ Dieciseisavos (1)' },
-    { key: 'r16', label: '⚔️ Dieciseisavos (2)' },
-    { key: 'qf', label: '⚔️ Cuartos' },
+    { key: 'r32', label: '⚔️ Dieciseisavos' },
+    { key: 'r16', label: '🔟 Octavos' },
+    { key: 'qf', label: '🏅 Cuartos' },
     { key: 'sf', label: '🏆 Semis/Final' },
     { key: 'special', label: '⭐ Premios' },
   ]
