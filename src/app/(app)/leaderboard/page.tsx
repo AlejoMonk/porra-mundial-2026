@@ -203,8 +203,9 @@ export default async function LeaderboardPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.25rem 2rem' }}>
             {[
               ['1º de grupo', '5 pts'], ['2º de grupo', '3 pts'], ['Ambos (bonus)', '+2 pts'],
-              ['Dieciséisavo de final', '3 pts'], ['Cuarto de final', '6 pts'],
-              ['Semifinal', '8 pts'], ['3er Puesto', '5 pts'], ['Campeón', '15 pts'],
+              ['Dieciséisavo de final', '3 pts'], ['Octavo de final', '4 pts'],
+              ['Cuarto de final', '6 pts'], ['Semifinal', '8 pts'],
+              ['3er Puesto', '5 pts'], ['Campeón', '15 pts'],
               ['Pichichi (nombre)', '10 pts'], ['MVP (nombre)', '8 pts'],
             ].map(([desc, pts]) => (
               <div key={desc} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.125rem 0' }}>

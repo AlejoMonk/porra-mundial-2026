@@ -2,7 +2,19 @@
 
 import { useState, useTransition } from 'react'
 import { Group, Team, R32Slot, getTeam } from '@/lib/constants'
+import { resolveR32Slots, propagateBracket } from '@/lib/bracket'
 import { updateGroupResults, updateMatchResult, updateThirdPlaceQualifiers, updateThirdPlaceAssignment, updateSpecialResults, recalculateAllScores } from '@/actions/admin'
+
+// Human-readable label for a knockout match number
+function matchRoundLabel(matchNum: number): string {
+  if (matchNum >= 73 && matchNum <= 88) return `Dieciseisavos · P${matchNum - 72}`
+  if (matchNum >= 89 && matchNum <= 96) return `Octavos · P${matchNum - 88}`
+  if (matchNum >= 97 && matchNum <= 100) return `Cuartos · P${matchNum - 96}`
+  if (matchNum === 101 || matchNum === 102) return `Semifinal ${matchNum - 100}`
+  if (matchNum === 103) return '3er Puesto'
+  if (matchNum === 104) return 'Final'
+  return `Partido ${matchNum}`
+}
 
 type TabKey = 'groups' | 'terceros' | 'r32' | 'r16' | 'qf' | 'sf' | 'special'
 
@@ -47,6 +59,23 @@ export default function ResultsForm({
     setMessage({ text, type })
     setTimeout(() => setMessage(null), 3000)
   }
+
+  // ── Resolve the real bracket from the admin's actual results ────────────────
+  // Group results → {A:{winner,runnerUp}}, then propagate KO winners forward so
+  // each match shows the two teams that actually play it (updates live as results
+  // are entered). The winner dropdown then only offers those two teams.
+  const bracketGroupPredictions: Record<string, { winner: string; runnerUp: string }> = {}
+  for (const [group, positions] of Object.entries(groupResults)) {
+    if (positions['1'] || positions['2']) {
+      bracketGroupPredictions[group] = { winner: positions['1'] ?? '', runnerUp: positions['2'] ?? '' }
+    }
+  }
+  const r32Slots = resolveR32Slots(
+    bracketGroupPredictions,
+    [],
+    Object.keys(thirdAssignment).length > 0 ? thirdAssignment : undefined
+  )
+  const allSlots = propagateBracket(r32Slots, matchResults as Record<number, string>)
 
   function saveGroupResults() {
     const formData = new FormData()
@@ -139,35 +168,54 @@ export default function ResultsForm({
     )
   }
 
-  function MatchResultRow({ matchNum, homeLabel, awayLabel }: { matchNum: number; homeLabel: string; awayLabel: string }) {
+  function MatchResultRow({ matchNum }: { matchNum: number }) {
+    const slot = allSlots[matchNum]
     const winner = matchResults[matchNum] ?? ''
-    const homeTeam = allTeams.find((t) => t.name === homeLabel || t.code === homeLabel)
-    const awayTeam = allTeams.find((t) => t.name === awayLabel || t.code === awayLabel)
+    const homeCode = slot?.home ?? null
+    const awayCode = slot?.away ?? null
+    const homeTeam = homeCode ? getTeam(homeCode) : null
+    const awayTeam = awayCode ? getTeam(awayCode) : null
+    const bothKnown = !!(homeCode && awayCode)
+
+    // Labels shown when the teams aren't determined yet (placeholders)
+    const homeDisplay = homeTeam ? `${homeTeam.flag} ${homeTeam.name}` : (slot?.homeLabel ?? 'Por determinar')
+    const awayDisplay = awayTeam ? `${awayTeam.flag} ${awayTeam.name}` : (slot?.awayLabel ?? 'Por determinar')
+
+    const prevHint = matchNum <= 88
+      ? 'Completa primero los resultados de grupos y la asignación de terceros.'
+      : 'Introduce primero los resultados de la ronda anterior.'
 
     return (
       <div className="glass" style={{ padding: '1rem', borderRadius: '0.75rem', marginBottom: '0.5rem' }}>
-        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Partido {matchNum}</div>
-        <div style={{ fontSize: '0.875rem', marginBottom: '0.75rem', color: 'var(--text-muted)' }}>
-          {homeLabel} <span style={{ color: 'var(--text-muted)' }}>vs</span> {awayLabel}
+        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '0.5rem' }}>
+          {matchRoundLabel(matchNum)} · <span style={{ opacity: 0.7 }}>Partido {matchNum}</span>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          <select
-            value={winner}
-            onChange={(e) => saveMatchResult(matchNum, e.target.value)}
-            className="form-input"
-            style={{ flex: 1, fontSize: '0.875rem', padding: '0.5rem 0.75rem', minWidth: 160 }}
-          >
-            <option value="">— Sin resultado —</option>
-            {allTeams.map((t) => (
-              <option key={t.code} value={t.code}>{t.flag} {t.name}</option>
-            ))}
-          </select>
-          {winner && (
-            <span className="badge badge-green" style={{ flexShrink: 0 }}>
-              Ganador: {(() => { const t = getTeam(winner); return t ? `${t.flag} ${t.name}` : winner })()}
-            </span>
-          )}
+        <div style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.75rem', color: bothKnown ? 'var(--text)' : 'var(--text-muted)' }}>
+          {homeDisplay} <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>vs</span> {awayDisplay}
         </div>
+        {bothKnown ? (
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <select
+              value={winner}
+              onChange={(e) => saveMatchResult(matchNum, e.target.value)}
+              className="form-input"
+              style={{ flex: 1, fontSize: '0.875rem', padding: '0.5rem 0.75rem', minWidth: 200 }}
+            >
+              <option value="">— Sin resultado —</option>
+              <option value={homeCode!}>{homeTeam!.flag} {homeTeam!.name}</option>
+              <option value={awayCode!}>{awayTeam!.flag} {awayTeam!.name}</option>
+            </select>
+            {winner && (
+              <span className="badge badge-green" style={{ flexShrink: 0 }}>
+                Ganador: {(() => { const t = getTeam(winner); return t ? `${t.flag} ${t.name}` : winner })()}
+              </span>
+            )}
+          </div>
+        ) : (
+          <div style={{ fontSize: '0.8rem', color: '#f59e0b', background: 'rgba(245,158,11,0.08)', padding: '0.5rem 0.75rem', borderRadius: '0.5rem' }}>
+            ⏳ {prevHint}
+          </div>
+        )}
       </div>
     )
   }
@@ -382,34 +430,29 @@ export default function ResultsForm({
         </div>
       )}
 
-      {/* R32 tab */}
+      {/* R32 tab — Dieciseisavos */}
       {tab === 'r32' && (
         <div>
           {r32Matches.map((m) => (
-            <MatchResultRow
-              key={m.match}
-              matchNum={m.match}
-              homeLabel={m.homeSlot.type === 'winner' ? `1º Grupo ${(m.homeSlot as { group: string }).group}` : m.homeSlot.type === 'runnerUp' ? `2º Grupo ${(m.homeSlot as { group: string }).group}` : `3º Mejor`}
-              awayLabel={m.awaySlot.type === 'winner' ? `1º Grupo ${(m.awaySlot as { group: string }).group}` : m.awaySlot.type === 'runnerUp' ? `2º Grupo ${(m.awaySlot as { group: string }).group}` : `3º Mejor`}
-            />
+            <MatchResultRow key={m.match} matchNum={m.match} />
           ))}
         </div>
       )}
 
-      {/* R16 tab */}
+      {/* R16 tab — Octavos */}
       {tab === 'r16' && (
         <div>
           {r16Matches.map((m) => (
-            <MatchResultRow key={m} matchNum={m} homeLabel={`Ganador partido ${m}`} awayLabel={`Ganador partido ${m}`} />
+            <MatchResultRow key={m} matchNum={m} />
           ))}
         </div>
       )}
 
-      {/* QF tab */}
+      {/* QF tab — Cuartos */}
       {tab === 'qf' && (
         <div>
           {qfMatches.map((m) => (
-            <MatchResultRow key={m} matchNum={m} homeLabel={`Ganador octavos`} awayLabel={`Ganador octavos`} />
+            <MatchResultRow key={m} matchNum={m} />
           ))}
         </div>
       )}
@@ -418,12 +461,7 @@ export default function ResultsForm({
       {tab === 'sf' && (
         <div>
           {[...sfMatches, 103, 104].map((m) => (
-            <MatchResultRow
-              key={m}
-              matchNum={m}
-              homeLabel={m === 103 ? 'Perdedor SF1' : m === 104 ? 'Ganador SF1' : `Ganador cuartos`}
-              awayLabel={m === 103 ? 'Perdedor SF2' : m === 104 ? 'Ganador SF2' : `Ganador cuartos`}
-            />
+            <MatchResultRow key={m} matchNum={m} />
           ))}
         </div>
       )}
