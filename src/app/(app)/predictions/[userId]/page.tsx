@@ -24,9 +24,11 @@ export default async function UserPredictionPage({ params }: { params: Promise<{
   const now = new Date()
   const phase1DeadlinePassed = !!(settings?.predictionDeadline && now > settings.predictionDeadline)
   const phase2DeadlinePassed = !!(settings?.phase2Deadline && now > settings.phase2Deadline)
+  const phase3DeadlinePassed = !!(settings?.phase3Deadline && now > settings.phase3Deadline)
   const deadlinePassed = phase1DeadlinePassed
   const canEditPhase1 = isMe && !phase1DeadlinePassed && prediction.isLocked
-  const canEditPhase2 = isMe && phase1DeadlinePassed && !phase2DeadlinePassed && !!settings?.phase2Deadline && prediction.isLocked
+  const canEditPhase2 = isMe && !!settings?.phase2Deadline && !phase2DeadlinePassed && prediction.isLocked
+  const canEditPhase3 = isMe && !!settings?.phase3Deadline && !phase3DeadlinePassed && prediction.isPhase2Locked
   if (!isMe && !deadlinePassed && !session?.isAdmin) {
     return (
       <div style={{ textAlign: 'center', paddingTop: '4rem' }}>
@@ -74,8 +76,13 @@ export default async function UserPredictionPage({ params }: { params: Promise<{
           </Link>
         )}
         {canEditPhase2 && (
-          <Link href="/predict" className="btn-primary" style={{ fontSize: '0.875rem', background: '#f59e0b', color: '#0a0f0a' }}>
-            ✏️ Editar fase 2
+          <Link href="/predict?phase=2" className="btn-primary" style={{ fontSize: '0.875rem', background: '#f59e0b', color: '#0a0f0a' }}>
+            {prediction.isPhase2Locked ? '✏️ Editar fase 2' : '📝 Rellenar fase 2'}
+          </Link>
+        )}
+        {canEditPhase3 && (
+          <Link href="/predict?phase=3" className="btn-primary" style={{ fontSize: '0.875rem', background: '#22c55e', color: '#0a0f0a' }}>
+            {prediction.isPhase3Locked ? '✏️ Editar fase 3' : '📝 Rellenar fase 3'}
           </Link>
         )}
       </div>

@@ -22,9 +22,11 @@ function InfoScreen({ icon, title, body, children }: { icon: string; title: stri
   )
 }
 
-export default async function PredictPage() {
+export default async function PredictPage({ searchParams }: { searchParams: Promise<{ phase?: string }> }) {
   const session = await getSession()
   if (!session) redirect('/login')
+
+  const { phase: requestedPhase } = await searchParams
 
   const [existing, settings, tournament] = await Promise.all([
     prisma.prediction.findUnique({ where: { userId: session.userId } }),
@@ -39,6 +41,12 @@ export default async function PredictPage() {
   const phase1Locked = existing?.isLocked ?? false
   const phase2Locked = existing?.isPhase2Locked ?? false
   const phase3Locked = existing?.isPhase3Locked ?? false
+
+  // A phase is "open" when its deadline is set and hasn't passed yet.
+  const phase2Activated = !!settings?.phase2Deadline
+  const phase3Activated = !!settings?.phase3Deadline
+  const phase2Open = phase2Activated && !phase2DeadlinePassed
+  const phase3Open = phase3Activated && !phase3DeadlinePassed
 
   // ── Phase 1 still open → always show wizard (editable, even if already submitted) ──
   if (!phase1DeadlinePassed) {
@@ -81,21 +89,10 @@ export default async function PredictPage() {
     : {}
   const thirdAssignmentProp = Object.keys(adminThirdPlaceAssignment).length > 0 ? adminThirdPlaceAssignment : undefined
 
-  // ── FASE 2: dieciseisavos + octavos (partidos 73-96) ────────────────────────
-  if (!phase2DeadlinePassed) {
-    // Phase 2 window is current (or not yet opened by admin)
-    if (!settings?.phase2Deadline) {
-      return (
-        <InfoScreen icon="✅" title="Fase 1 enviada" body="La fase 2 (dieciseisavos y octavos) aún no está habilitada. El admin la abrirá tras la fase de grupos.">
-          <Link href="/leaderboard" className="btn-secondary">Ver clasificación</Link>
-        </InfoScreen>
-      )
-    }
-
+  function renderPhase2() {
     const phase2Draft = existing!.knockoutPicks && existing!.knockoutPicks !== '{}'
       ? { knockoutPicks: JSON.parse(existing!.knockoutPicks || '{}') }
       : null
-
     return (
       <Phase2Wizard
         initialData={phase2Draft}
@@ -107,32 +104,13 @@ export default async function PredictPage() {
     )
   }
 
-  // ── Phase 2 window closed but never submitted → cannot continue to phase 3 ───
-  if (!phase2Locked) {
-    return (
-      <InfoScreen icon="⏰" title="Plazo fase 2 cerrado" body="El plazo para la fase 2 ha finalizado sin que enviaras tus dieciseisavos y octavos.">
-        <Link href="/leaderboard" className="btn-primary">Ver clasificación</Link>
-      </InfoScreen>
-    )
-  }
-
-  // ── FASE 3: cuartos → final + premios (partidos 97-104) ─────────────────────
-  if (!phase3DeadlinePassed) {
-    if (!settings?.phase3Deadline) {
-      return (
-        <InfoScreen icon="✅" title="Fase 2 enviada" body="La fase 3 (cuartos, semis, final y premios) aún no está habilitada. El admin la abrirá tras los octavos de final.">
-          <Link href="/leaderboard" className="btn-secondary">Ver clasificación</Link>
-        </InfoScreen>
-      )
-    }
-
+  function renderPhase3() {
     const lockedKnockoutPicks = JSON.parse(existing!.knockoutPicks || '{}')
     const phase3Draft = {
       knockoutPicks: lockedKnockoutPicks,
       topScorerTeam: existing!.topScorerTeam ?? '',
       mvpTeam: existing!.mvpTeam ?? '',
     }
-
     return (
       <Phase3Wizard
         initialData={phase3Draft}
@@ -142,6 +120,55 @@ export default async function PredictPage() {
         lockedKnockoutPicks={lockedKnockoutPicks}
         isEditing={phase3Locked}
       />
+    )
+  }
+
+  // ── Explicit edit request via ?phase= (from the "Editar fase X" buttons) ────
+  if (requestedPhase === '2' && phase2Open) return renderPhase2()
+  if (requestedPhase === '3' && phase3Open && phase2Locked) return renderPhase3()
+
+  // ── Default: show the most advanced phase the user can act on right now ──────
+  // Phase 3 takes priority once the user has submitted phase 2 and phase 3 is open.
+  if (phase3Open && phase2Locked) return renderPhase3()
+
+  // Phase 2 open → fill it (or edit it if already submitted).
+  if (phase2Open) return renderPhase2()
+
+  // ── Neither phase 2 nor 3 is open in an actionable way — pick the right message ──
+
+  // Phase 3 is open but the user never submitted phase 2 → they can't build the QF bracket.
+  if (phase3Open && !phase2Locked) {
+    return (
+      <InfoScreen icon="🔒" title="Fase 2 no enviada" body="La fase 3 (cuartos → final) parte de tus octavos, pero no enviaste la fase 2 a tiempo, así que no puedes participar en la fase 3.">
+        <Link href="/leaderboard" className="btn-primary">Ver clasificación</Link>
+      </InfoScreen>
+    )
+  }
+
+  // Phase 2 not yet activated by the admin.
+  if (!phase2Activated) {
+    return (
+      <InfoScreen icon="✅" title="Fase 1 enviada" body="La fase 2 (dieciseisavos y octavos) aún no está habilitada. El admin la abrirá tras la fase de grupos.">
+        <Link href="/leaderboard" className="btn-secondary">Ver clasificación</Link>
+      </InfoScreen>
+    )
+  }
+
+  // Phase 2 activated but closed and never submitted.
+  if (!phase2Locked) {
+    return (
+      <InfoScreen icon="⏰" title="Plazo fase 2 cerrado" body="El plazo para la fase 2 ha finalizado sin que enviaras tus dieciseisavos y octavos.">
+        <Link href="/leaderboard" className="btn-primary">Ver clasificación</Link>
+      </InfoScreen>
+    )
+  }
+
+  // Phase 2 locked & closed. Phase 3 not activated yet.
+  if (!phase3Activated) {
+    return (
+      <InfoScreen icon="✅" title="Fase 2 enviada" body="La fase 3 (cuartos, semis, final y premios) aún no está habilitada. El admin la abrirá tras los octavos de final.">
+        <Link href="/leaderboard" className="btn-secondary">Ver clasificación</Link>
+      </InfoScreen>
     )
   }
 
