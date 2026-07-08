@@ -31,7 +31,7 @@ export default async function PredictPage({ searchParams }: { searchParams: Prom
   const [existing, settings, tournament] = await Promise.all([
     prisma.prediction.findUnique({ where: { userId: session.userId } }),
     prisma.appSettings.findUnique({ where: { id: 'singleton' } }),
-    prisma.tournamentResult.findUnique({ where: { id: 'singleton' }, select: { thirdPlaceAssignment: true, groupResults: true } }),
+    prisma.tournamentResult.findUnique({ where: { id: 'singleton' }, select: { thirdPlaceAssignment: true, groupResults: true, matchResults: true } }),
   ])
 
   const now = new Date()
@@ -88,6 +88,10 @@ export default async function PredictPage({ searchParams }: { searchParams: Prom
     ? JSON.parse(tournament.thirdPlaceAssignment)
     : {}
   const thirdAssignmentProp = Object.keys(adminThirdPlaceAssignment).length > 0 ? adminThirdPlaceAssignment : undefined
+  // Real match results (73-96) — used by phase 3 to show the ACTUAL quarterfinalists
+  const adminMatchResults: Record<number, string> = tournament?.matchResults
+    ? JSON.parse(tournament.matchResults)
+    : {}
 
   function renderPhase2() {
     const phase2Draft = existing!.knockoutPicks && existing!.knockoutPicks !== '{}'
@@ -117,6 +121,7 @@ export default async function PredictPage({ searchParams }: { searchParams: Prom
         phase1GroupPredictions={bracketGroupPredictions}
         phase1ThirdPlacePicks={[]}
         adminThirdPlaceAssignment={thirdAssignmentProp}
+        adminMatchResults={adminMatchResults}
         lockedKnockoutPicks={lockedKnockoutPicks}
         isEditing={phase3Locked}
       />

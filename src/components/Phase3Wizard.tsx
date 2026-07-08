@@ -25,6 +25,7 @@ export default function Phase3Wizard({
   phase1GroupPredictions,
   phase1ThirdPlacePicks,
   adminThirdPlaceAssignment,
+  adminMatchResults,
   lockedKnockoutPicks,
   isEditing = false,
 }: {
@@ -32,7 +33,9 @@ export default function Phase3Wizard({
   phase1GroupPredictions: GroupPredictions
   phase1ThirdPlacePicks: string[]
   adminThirdPlaceAssignment?: Record<number, string>
-  // The user's locked phase-2 picks (R32 + R16), needed to build the QF bracket
+  // Real match results entered by the admin (73-96) — determine the ACTUAL quarterfinalists
+  adminMatchResults: Record<number, string>
+  // The user's locked phase-2 picks (fallback only)
   lockedKnockoutPicks: KnockoutPicks
   isEditing?: boolean
 }) {
@@ -44,10 +47,18 @@ export default function Phase3Wizard({
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
-  // Bracket is built from admin group results + the user's locked phase-2 winners.
-  // Phase 3 only edits matches 97-104; phase-2 picks (73-96) stay fixed.
+  // The QF entry teams come from the REAL octavos results (73-96), not the user's
+  // phase-2 predictions — by phase 3, those rounds have been played. The user's own
+  // phase-3 picks (97-104) then propagate forward to fill SF / Final.
+  const bracketPicks: KnockoutPicks = {}
+  for (const [m, code] of Object.entries(adminMatchResults)) {
+    if (code && Number(m) <= 96) bracketPicks[Number(m)] = code
+  }
+  for (const [m, code] of Object.entries(data.knockoutPicks)) {
+    if (code && Number(m) >= 97) bracketPicks[Number(m)] = code
+  }
   const r32Slots = resolveR32Slots(phase1GroupPredictions, phase1ThirdPlacePicks, adminThirdPlaceAssignment)
-  const allSlots = propagateBracket(r32Slots, data.knockoutPicks)
+  const allSlots = propagateBracket(r32Slots, bracketPicks)
 
   const setKnockoutPick = useCallback((matchNum: number, teamCode: string) => {
     setData((prev) => {
